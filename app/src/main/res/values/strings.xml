@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sharelog Sample</string>
+    <string name="action_share_logs">Share Logs</string>
+    <string name="description">This is a Sharelog sample. To create and share logs tap 3 times or use menu option</string>
+</resources>

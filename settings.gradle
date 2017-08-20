@@ -1,0 +1,2 @@
+include ':SharelogSample'
+project(':SharelogSample').projectDir = new File('app')

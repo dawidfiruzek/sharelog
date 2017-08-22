@@ -69,6 +69,7 @@ class Sharelog(private val context: Context) {
     }
 
     private fun clear() {
+        firstTouchTimestamp = 0
         touchTimestamp = 0
         tapCounter = 0
     }

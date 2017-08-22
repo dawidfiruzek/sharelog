@@ -1,6 +1,7 @@
 package pl.dawidfiruzek.sharelogsample
 
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -8,10 +9,15 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import pl.dawidfiruzek.sharelog.Sharelog
+import pl.dawidfiruzek.sharelog.SharelogGestureMode
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "Sharelog"
+    private lateinit var sharelog: Sharelog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +25,20 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        sharelog = Sharelog(this)
+                .setGestureMode(SharelogGestureMode.TRIPLE_TAP)
+
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { view ->
             Log.wtf(TAG, "onFabClicked")
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", { _ -> Log.w(TAG, "onSnackbarActionClicked") }).show()
+        }
+
+        val root = findViewById<ConstraintLayout>(R.id.main_root)
+        root.setOnTouchListener { _, motionEvent ->
+            sharelog.capture(motionEvent)
+            true
         }
 
         Log.d(TAG, "onCreate")
@@ -46,7 +61,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.action_share_logs -> true
+        R.id.action_share_logs -> {
+            sharelog.capture()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 }

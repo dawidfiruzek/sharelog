@@ -8,16 +8,18 @@ import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 
 class Sharelog(private val context: Context) {
 
+    private var firstTouchTimestamp = 0L
     private var touchTimestamp = 0L
     private var tapCounter = 0
 
     private var mode: SharelogGestureMode = MANUAL
 
     /**
-     * Setting gesture mode. Default mode is MANUAL.
+     * Setting gesture mode. Default mode is only MANUAL.
      */
-    fun setGestureMode(mode: SharelogGestureMode) {
+    fun setGestureMode(mode: SharelogGestureMode): Sharelog {
         this.mode = mode
+        return this
     }
 
     fun capture(motionEvent: MotionEvent? = null) {
@@ -25,9 +27,7 @@ class Sharelog(private val context: Context) {
             if (mode == MANUAL) return else {
                 countTaps(it)
             }
-        } ?: if (mode != MANUAL) return else {
-            sharelog()
-        }
+        } ?: sharelog()
     }
 
     private fun sharelog() {
@@ -48,11 +48,19 @@ class Sharelog(private val context: Context) {
 
     private fun countTaps(motionEvent: MotionEvent) {
         when (motionEvent.action) {
-            MotionEvent.ACTION_DOWN -> touchTimestamp = System.currentTimeMillis()
+            MotionEvent.ACTION_DOWN -> {
+                if (tapCounter == 0) {
+                    firstTouchTimestamp = System.currentTimeMillis()
+                }
+                touchTimestamp = System.currentTimeMillis()
+            }
             MotionEvent.ACTION_UP -> {
+                ++tapCounter
                 if (System.currentTimeMillis() - touchTimestamp > ViewConfiguration.getTapTimeout()) {
                     clear()
-                } else if (++tapCounter == mode.tapsNumber) {
+//                } else if (System.currentTimeMillis() - firstTouchTimestamp > ViewConfiguration.getTapTimeout() * mode.tapsNumber) {
+//                    clear()
+                } else if (tapCounter == mode.tapsNumber) {
                     clear()
                     sharelog()
                 }

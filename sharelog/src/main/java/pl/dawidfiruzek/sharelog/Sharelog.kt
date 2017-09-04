@@ -3,9 +3,9 @@ package pl.dawidfiruzek.sharelog
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Handler
 import android.os.Process
+import android.support.v4.content.FileProvider
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.MotionEvent
@@ -14,6 +14,7 @@ import java.io.*
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+
 
 class Sharelog(private val activity: Activity) {
 
@@ -126,9 +127,14 @@ class Sharelog(private val activity: Activity) {
     }
 
     private fun share(filePath: String) {
+        val uri = FileProvider.getUriForFile(
+                activity,
+                BuildConfig.APPLICATION_ID + ".provider",
+                File(filePath))
+
         val sendIntent = Intent(Intent.ACTION_SEND)
         sendIntent.type = "application/zip"
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(filePath)))
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
         activity.startActivity(sendIntent)
     }
 

@@ -1,21 +1,24 @@
 package pl.dawidfiruzek.sharelog
 
 import android.content.Context
+import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
-import android.view.ViewConfiguration
 import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 
 class Sharelog(private val context: Context) {
 
-    private var firstTouchTimestamp = 0L
-    private var touchTimestamp = 0L
+    companion object {
+        private const val tapTimeout = 300L
+    }
+
     private var tapCounter = 0
+    private val handler: Handler = Handler()
 
     private var mode: SharelogGestureMode = MANUAL
 
     /**
-     * Setting gesture mode. Default mode is only MANUAL.
+     * Setting gesture mode. Default mode is MANUAL.
      */
     fun setGestureMode(mode: SharelogGestureMode): Sharelog {
         this.mode = mode
@@ -50,27 +53,23 @@ class Sharelog(private val context: Context) {
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (tapCounter == 0) {
-                    firstTouchTimestamp = System.currentTimeMillis()
+                    handler.removeCallbacksAndMessages(null)
+                    handler.postDelayed({ clearCounter() }, tapTimeout * mode.tapsNumber)
                 }
-                touchTimestamp = System.currentTimeMillis()
-            }
-            MotionEvent.ACTION_UP -> {
+
                 ++tapCounter
-                if (System.currentTimeMillis() - touchTimestamp > ViewConfiguration.getTapTimeout()) {
-                    clear()
-//                } else if (System.currentTimeMillis() - firstTouchTimestamp > ViewConfiguration.getTapTimeout() * mode.tapsNumber) {
-//                    clear()
-                } else if (tapCounter == mode.tapsNumber) {
-                    clear()
+
+                if (tapCounter == mode.tapsNumber) {
+                    handler.removeCallbacksAndMessages(null)
+                    clearCounter()
                     sharelog()
                 }
             }
         }
     }
 
-    private fun clear() {
-        firstTouchTimestamp = 0
-        touchTimestamp = 0
+    private fun clearCounter() {
+        Log.e("Sharelog", "clear called")
         tapCounter = 0
     }
 }

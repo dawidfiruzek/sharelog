@@ -1,1 +1,1 @@
-include ':sharelog-sample'
+include ':sharelog-sample', ':sharelog'

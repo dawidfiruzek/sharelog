@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         sharelog = Sharelog(this)
-                .setGestureMode(SharelogGestureMode.QUAD_TAP)
+                .setGestureMode(SharelogGestureMode.TRIPLE_TAP)
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { view ->

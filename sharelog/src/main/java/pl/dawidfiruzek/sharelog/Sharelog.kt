@@ -1,8 +1,9 @@
 package pl.dawidfiruzek.sharelog
 
 import android.app.Activity
-import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Handler
 import android.os.Process
 import android.text.format.DateFormat
@@ -11,6 +12,8 @@ import android.view.MotionEvent
 import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 import java.io.*
 import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class Sharelog(private val activity: Activity) {
 
@@ -23,6 +26,8 @@ class Sharelog(private val activity: Activity) {
     private val processId = Process.myPid().toString()
 
     private var mode: SharelogGestureMode = MANUAL
+
+    private var date: String = ""
 
     /**
      * Setting gesture mode. Default mode is MANUAL.
@@ -41,16 +46,16 @@ class Sharelog(private val activity: Activity) {
     }
 
     private fun sharelog() {
-        val date = DateFormat.format("yyyy_MM_dd_hh:mm:ss", Date()).toString()
-        val screenshotPath = takeScreenshot(date)
-        val logsFilePath = collectLogs(date)
-        makePackage()
-        sharePackage()
+        date = DateFormat.format("yyyy_MM_dd_hh_mm_ss", Date()).toString()
+        val screenshotPath = takeScreenshot()
+        val logsFilePath = collectLogs()
+        val zipFilePath = makePackage(screenshotPath, logsFilePath)
+        share(zipFilePath)
         Log.d("Sharelog", "Sharelogged")
     }
 
-    private fun takeScreenshot(date: String) : String {
-        val path = activity.filesDir.absolutePath + "/" + date + ".png"
+    private fun takeScreenshot() : String {
+        val path = activity.getExternalFilesDir(null).absolutePath + "/" + date + ".png"
 
         val rootView = activity.window.decorView.rootView
         rootView.isDrawingCacheEnabled = true
@@ -66,8 +71,8 @@ class Sharelog(private val activity: Activity) {
         return path
     }
 
-    private fun collectLogs(date: String) : String {
-        val path = activity.filesDir.absolutePath + "/" + date
+    private fun collectLogs() : String {
+        val path = activity.getExternalFilesDir(null).absolutePath + "/" + date + ".txt"
 
         val logCommand = arrayOf("logcat", "-d", "-v", "threadtime")
         val process = Runtime.getRuntime().exec(logCommand)
@@ -75,7 +80,7 @@ class Sharelog(private val activity: Activity) {
         val sb = StringBuilder()
 
         bufferedReader.forEachLine {
-            if (it.contains(processId)) sb.append(it)
+            if (it.contains(processId)) sb.append(it).append("\n")
         }
 
         val file = File(path)
@@ -87,9 +92,45 @@ class Sharelog(private val activity: Activity) {
         return path
     }
 
-    private fun makePackage() {}
+    private fun makePackage(vararg filePaths: String) : String {
+        val path = activity.getExternalFilesDir(null).absolutePath + "/sharelog_" + date + ".zip"
+        val BUFFER = 4096
 
-    private fun sharePackage() {}
+        val fos = FileOutputStream(path)
+        val zos = ZipOutputStream(BufferedOutputStream(
+                fos))
+        val data = ByteArray(BUFFER)
+
+        filePaths.forEach {
+            val origin: BufferedInputStream
+            Log.v("Compressing", "Adding $it")
+            val fi = FileInputStream(it)
+            origin = BufferedInputStream(fi, BUFFER)
+
+            val entry = ZipEntry(it.substring(it.lastIndexOf("/") + 1))
+            zos.putNextEntry(entry)
+
+
+            while (true) {
+                val count = origin.read(data, 0, BUFFER)
+                if (count == -1) break
+                zos.write(data, 0, count)
+            }
+
+            origin.close()
+            zos.closeEntry()
+        }
+
+        zos.close()
+        return path
+    }
+
+    private fun share(filePath: String) {
+        val sendIntent = Intent(Intent.ACTION_SEND)
+        sendIntent.type = "application/zip"
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(filePath)))
+        activity.startActivity(sendIntent)
+    }
 
     private fun countTaps(motionEvent: MotionEvent) {
         when (motionEvent.action) {

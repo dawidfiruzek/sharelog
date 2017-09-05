@@ -129,7 +129,7 @@ class Sharelog(private val activity: Activity) {
     private fun share(filePath: String) {
         val uri = FileProvider.getUriForFile(
                 activity,
-                BuildConfig.APPLICATION_ID + ".provider",
+                "pl.dawidfiruzek.sharelog.fileprovider",
                 File(filePath))
 
         val sendIntent = Intent(Intent.ACTION_SEND)

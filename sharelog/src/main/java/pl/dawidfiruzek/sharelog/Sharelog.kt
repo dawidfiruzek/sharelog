@@ -8,6 +8,8 @@ import android.widget.Toast
 import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtils
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtilsImpl
+import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtils
+import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtilsImpl
 import pl.dawidfiruzek.sharelog.util.logs.LogsUtils
 import pl.dawidfiruzek.sharelog.util.logs.LogsUtilsImpl
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtils
@@ -30,6 +32,7 @@ class Sharelog(private val activity: Activity) {
     private val logsUtils: LogsUtils = LogsUtilsImpl(activity)
     private val archiveUtils: ArchiveUtils = ArchiveUtilsImpl(activity)
     private val shareUtils: ShareUtils = ShareUtilsImpl(activity)
+    private val cleanupUtils: CleanupUtils = CleanupUtilsImpl(activity)
 
     private var mode: SharelogGestureMode = MANUAL
 
@@ -78,12 +81,11 @@ class Sharelog(private val activity: Activity) {
         val logsFileName = date + ".txt"
         val archiveFileName = date + ".zip"
 
-
         screenshotUtils.takeScreenshot(screenshotFileName, {
             logsUtils.collectLogs(logsFileName, {
                 archiveUtils.makePackage(archiveFileName, arrayListOf(screenshotFileName, logsFileName), {
                     shareUtils.share(archiveFileName)
-                    //todo remove old files
+                    cleanupUtils.cleanup(archiveFileName)
                 }, {
                     Toast.makeText(activity, "Failed to create archive", Toast.LENGTH_SHORT).show()
                 })

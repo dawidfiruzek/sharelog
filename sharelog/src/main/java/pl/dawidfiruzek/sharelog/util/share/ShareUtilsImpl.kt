@@ -7,8 +7,8 @@ import java.io.File
 
 internal class ShareUtilsImpl(private val activity: Activity) : ShareUtils {
 
-    override fun share(filePath: String) {
-        val path = activity.getExternalFilesDir(null).absolutePath + "/" + filePath
+    override fun share(filename: String) {
+        val path = activity.getExternalFilesDir(null).absolutePath + "/" + filename
         val uri = FileProvider.getUriForFile(
                 activity,
                 "pl.dawidfiruzek.sharelog.fileprovider",

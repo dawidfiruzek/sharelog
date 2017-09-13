@@ -11,9 +11,9 @@ import java.util.zip.ZipOutputStream
 
 internal class ArchiveUtilsImpl(private val activity: Activity) : ArchiveUtils {
 
-    override fun makePackage(filePath: String, fileNamesToArchive: List<String>, success: SuccessCallback, failure: FailureCallback) {
+    override fun makePackage(filename: String, fileNamesToArchive: List<String>, success: Callback, failure: Callback) {
         try {
-            val path = activity.getExternalFilesDir(null).absolutePath + "/sharelog_" + filePath
+            val path = activity.getExternalFilesDir(null).absolutePath + "/sharelog_" + filename
             val BUFFER = 4096
 
             val fos = FileOutputStream(path)

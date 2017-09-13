@@ -1,9 +1,8 @@
 package pl.dawidfiruzek.sharelog.util.archive
 
-internal typealias SuccessCallback = () -> Unit
-internal typealias FailureCallback = () -> Unit
+internal typealias Callback = () -> Unit
 
 internal interface ArchiveUtils {
 
-    fun makePackage(filePath: String, fileNamesToArchive: List<String>, success: SuccessCallback, failure: FailureCallback)
+    fun makePackage(filename: String, fileNamesToArchive: List<String>, success: Callback, failure: Callback)
 }

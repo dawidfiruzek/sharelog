@@ -1,13 +1,8 @@
 package pl.dawidfiruzek.sharelog
 
 import android.app.Activity
-import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Handler
-import android.os.Process
-import android.support.v4.content.FileProvider
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
@@ -19,10 +14,7 @@ import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtils
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtilsImpl
 import pl.dawidfiruzek.sharelog.util.share.ShareUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtilsImpl
-import java.io.*
 import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 class Sharelog(private val activity: Activity) {
 

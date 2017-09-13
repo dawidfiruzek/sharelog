@@ -7,9 +7,9 @@ import java.io.FileOutputStream
 
 internal class ScreenshotUtilsImpl(private val activity: Activity) : ScreenshotUtils {
 
-    override fun takeScreenshot(fileName: String, success: SuccessCallback, failure: FailureCallback) {
+    override fun takeScreenshot(filename: String, success: Callback, failure: Callback) {
         try {
-            val path = activity.getExternalFilesDir(null).absolutePath + "/" + fileName
+            val path = activity.getExternalFilesDir(null).absolutePath + "/" + filename
 
             val rootView = activity.window.decorView.rootView
             rootView.isDrawingCacheEnabled = true

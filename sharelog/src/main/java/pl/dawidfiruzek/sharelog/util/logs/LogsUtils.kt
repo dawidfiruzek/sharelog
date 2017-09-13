@@ -1,9 +1,8 @@
 package pl.dawidfiruzek.sharelog.util.logs
 
-internal typealias SuccessCallback = () -> Unit
-internal typealias FailureCallback = () -> Unit
+internal typealias Callback = () -> Unit
 
 internal interface LogsUtils {
 
-    fun collectLogs(fileName: String, success: SuccessCallback, failure: FailureCallback)
+    fun collectLogs(filename: String, success: Callback, failure: Callback)
 }

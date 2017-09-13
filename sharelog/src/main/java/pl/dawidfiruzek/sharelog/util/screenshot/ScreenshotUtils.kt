@@ -1,9 +1,8 @@
 package pl.dawidfiruzek.sharelog.util.screenshot
 
-internal typealias SuccessCallback = () -> Unit
-internal typealias FailureCallback = () -> Unit
+internal typealias Callback = () -> Unit
 
 internal interface ScreenshotUtils {
 
-    fun takeScreenshot(fileName: String, success: SuccessCallback, failure: FailureCallback)
+    fun takeScreenshot(filename: String, success: Callback, failure: Callback)
 }

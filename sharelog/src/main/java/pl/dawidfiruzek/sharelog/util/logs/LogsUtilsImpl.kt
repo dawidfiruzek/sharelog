@@ -11,9 +11,9 @@ internal class LogsUtilsImpl(private val activity: Activity) : LogsUtils {
 
     private val processId = Process.myPid().toString()
 
-    override fun collectLogs(fileName: String, success: SuccessCallback, failure: FailureCallback) {
+    override fun collectLogs(filename: String, success: Callback, failure: Callback) {
         try {
-            val path = activity.getExternalFilesDir(null).absolutePath + "/" + fileName
+            val path = activity.getExternalFilesDir(null).absolutePath + "/" + filename
 
             val logCommand = arrayOf("logcat", "-d", "-v", "threadtime")
             val process = Runtime.getRuntime().exec(logCommand)

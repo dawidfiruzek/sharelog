@@ -24,7 +24,7 @@ class SharelogTest {
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        sharelog = Sharelog(activity)
+//        sharelog = Sharelog(activity)
     }
 
     @After

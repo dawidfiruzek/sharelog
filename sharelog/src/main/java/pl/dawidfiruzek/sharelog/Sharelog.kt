@@ -18,22 +18,33 @@ import pl.dawidfiruzek.sharelog.util.share.ShareUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtilsImpl
 import java.util.*
 
-class Sharelog(private val activity: Activity) {
+class Sharelog private constructor(
+        private val activity: Activity,
+        private val handler: Handler,
+        private val screenshotUtils: ScreenshotUtils,
+        private val logsUtils: LogsUtils,
+        private val archiveUtils: ArchiveUtils,
+        private val shareUtils: ShareUtils,
+        private val cleanupUtils: CleanupUtils
+) {
 
     companion object {
+        fun getInstance(activity: Activity) =
+                Sharelog(
+                        activity,
+                        Handler(),
+                        ScreenshotUtilsImpl(activity),
+                        LogsUtilsImpl(activity),
+                        ArchiveUtilsImpl(activity),
+                        ShareUtilsImpl(activity),
+                        CleanupUtilsImpl(activity)
+                )
+
         private const val dateFormat = "yyyy_MM_dd_hh_mm_ss"
         private const val tapTimeout = 300L
     }
 
     private var tapCounter = 0
-    private val handler: Handler = Handler()
-
-    private val screenshotUtils: ScreenshotUtils = ScreenshotUtilsImpl(activity)
-    private val logsUtils: LogsUtils = LogsUtilsImpl(activity)
-    private val archiveUtils: ArchiveUtils = ArchiveUtilsImpl(activity)
-    private val shareUtils: ShareUtils = ShareUtilsImpl(activity)
-    private val cleanupUtils: CleanupUtils = CleanupUtilsImpl(activity)
-
     private var mode: SharelogGestureMode = MANUAL
 
     /**

@@ -11,7 +11,8 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun data(): Collection<SharelogGestureMode> = SharelogGestureMode.values().filter { it > MANUAL }
+        fun data(): Collection<SharelogGestureMode> =
+                SharelogGestureMode.values().filter { it > MANUAL }
     }
 
     @Test

@@ -26,12 +26,23 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
     }
 
     @Test
+    fun capture_manualGestureMode() {
+        sharelog.setGestureMode(MANUAL)
+
+        (1..gestureMode.tapsNumber).forEach {
+            sharelog.capture(motionEvent)
+        }
+
+        //nothing should happen because of explicit set of MANUAL mode
+    }
+
+    @Test
     fun capture_noGestureSet() {
         (1..gestureMode.tapsNumber).forEach {
             sharelog.capture(motionEvent)
         }
 
-        //nothing should happen because of not set mode
+        //nothing should happen because of not set mode which is default set to MANUAL
     }
 
     @Test

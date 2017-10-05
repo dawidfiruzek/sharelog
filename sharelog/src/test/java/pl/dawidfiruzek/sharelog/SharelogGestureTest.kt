@@ -3,7 +3,7 @@ package pl.dawidfiruzek.sharelog
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import pl.dawidfiruzek.sharelog.SharelogGestureMode.*
+import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 
 @RunWith(Parameterized::class)
 class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSharelogTest() {
@@ -11,7 +11,7 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun data(): Collection<SharelogGestureMode> = arrayListOf(TRIPLE_TAP, QUAD_TAP, QUINT_TAP)
+        fun data(): Collection<SharelogGestureMode> = SharelogGestureMode.values().filter { it > MANUAL }
     }
 
     @Test

@@ -86,8 +86,6 @@ class SharelogTest {
     @After
     fun tearDown() {
         Mockito.verifyNoMoreInteractions(
-                activity,
-                handler,
                 screenshotUtils,
                 logsUtils,
                 archiveUtils,
@@ -96,12 +94,90 @@ class SharelogTest {
     }
 
     @Test
-    fun captureManual() {
+    fun captureManual_screenshotFailed() {
+        mockScreenshotFailed()
+
+        sharelog.capture()
+
+        verifyScreenshotFailed()
+    }
+
+    @Test
+    fun captureManual_logsFailed() {
+        mockScreenshotSuccess_logsFailed()
+
+        sharelog.capture()
+
+        verifyScreenshotSuccess_logsFailed()
+    }
+
+    @Test
+    fun captureManual_archiveFailed() {
+        mockScreenshotSuccess_logsSuccess_archiveFailed()
+
+        sharelog.capture()
+
+        verifyScreenshotSuccess_logsSuccess_archiveFailed()
+    }
+
+    @Test
+    fun captureManual_success() {
+        mockScreenshotSuccess_logsSuccess_archiveSuccess()
+
+        sharelog.capture()
+
+        verifyScreenshotSuccess_logsSuccess_archiveSuccess()
+    }
+
+    private fun mockScreenshotFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun verifyScreenshotFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun mockScreenshotSuccess_logsFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun verifyScreenshotSuccess_logsFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun mockScreenshotSuccess_logsSuccess_archiveFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun verifyScreenshotSuccess_logsSuccess_archiveFailed() {
+        TODO("Not implemented")
+    }
+
+    private fun mockScreenshotSuccess_logsSuccess_archiveSuccess() {
+        TODO("Not implemented")
+    }
+
+    private fun verifyScreenshotSuccess_logsSuccess_archiveSuccess() {
         TODO("Not implemented")
     }
 
     @Test
-    fun captureGesture() {
+    fun captureGesture_screenshotFailed() {
+        TODO("Not implemented")
+    }
+
+    @Test
+    fun captureGesture_logsFailed() {
+        TODO("Not implemented")
+    }
+
+    @Test
+    fun captureGesture_archiveFailed() {
+        TODO("Not implemented")
+    }
+
+    @Test
+    fun captureGesture_success() {
         TODO("Not implemented")
     }
 
@@ -110,5 +186,38 @@ class SharelogTest {
         sharelog.capture(motionEvent)
 
         //nothing should happen because of not set mode
+    }
+
+    @Test
+    fun captureTriple_tooLittleTaps() {
+        sharelog.setGestureMode(SharelogGestureMode.TRIPLE_TAP)
+
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+
+        //nothing should happen because of too little taps
+    }
+
+    @Test
+    fun captureQuad_tooLittleTaps() {
+        sharelog.setGestureMode(SharelogGestureMode.QUAD_TAP)
+
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+
+        //nothing should happen because of too little taps
+    }
+
+    @Test
+    fun captureQuint_tooLittleTaps() {
+        sharelog.setGestureMode(SharelogGestureMode.QUINT_TAP)
+
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+        sharelog.capture(motionEvent)
+
+        //nothing should happen because of too little taps
     }
 }

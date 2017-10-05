@@ -15,13 +15,6 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
     }
 
     @Test
-    fun capture_noGestureSet() {
-        sharelog.capture(motionEvent)
-
-        //nothing should happen because of not set mode
-    }
-
-    @Test
     fun capture_tooLittleTaps() {
         sharelog.setGestureMode(gestureMode)
 
@@ -30,6 +23,15 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
         }
 
         //nothing should happen because of too little taps
+    }
+
+    @Test
+    fun capture_noGestureSet() {
+        (1..gestureMode.tapsNumber).forEach {
+            sharelog.capture(motionEvent)
+        }
+
+        //nothing should happen because of not set mode
     }
 
     @Test

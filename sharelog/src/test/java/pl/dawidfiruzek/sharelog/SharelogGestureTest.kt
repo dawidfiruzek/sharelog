@@ -12,7 +12,7 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
         @JvmStatic
         @Parameterized.Parameters
         fun data(): Collection<SharelogGestureMode> =
-                SharelogGestureMode.values().filter { it > MANUAL }
+                SharelogGestureMode.values().filter { it.tapsNumber > MANUAL.tapsNumber }
     }
 
     @Test

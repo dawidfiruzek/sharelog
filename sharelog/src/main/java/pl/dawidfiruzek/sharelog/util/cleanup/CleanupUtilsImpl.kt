@@ -8,17 +8,21 @@ import java.io.File
 internal class CleanupUtilsImpl(private val activity: Activity) : CleanupUtils {
 
     override fun cleanup(currentArchiveFilename: String) {
-        val dirPath = activity.getExternalFilesDir(null).absolutePath
+        Thread {
+            val dirPath = activity.getExternalFilesDir(null).absolutePath
 
-        try {
-            val dir = File(dirPath)
-            if (dir.isDirectory) {
-                removeFiles(dir, currentArchiveFilename)
+            try {
+                val dir = File(dirPath)
+                if (dir.isDirectory) {
+                    removeFiles(dir, currentArchiveFilename)
+                }
+            } catch (e: Exception) {
+                activity.runOnUiThread {
+                    Toast.makeText(activity, "Error during cleanup", Toast.LENGTH_SHORT).show()
+                }
+                Log.e(CleanupUtils.TAG, "Error during cleanup", e)
             }
-        } catch (e: Exception) {
-            Toast.makeText(activity, "Error during cleanup", Toast.LENGTH_SHORT).show()
-            Log.e(CleanupUtils.TAG, "Error during cleanup", e)
-        }
+        }.run()
     }
 
     private fun removeFiles(dir: File, currentArchiveFilename: String) {

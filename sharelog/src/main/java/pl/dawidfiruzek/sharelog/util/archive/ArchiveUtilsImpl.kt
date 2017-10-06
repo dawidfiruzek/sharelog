@@ -12,39 +12,41 @@ import java.util.zip.ZipOutputStream
 internal class ArchiveUtilsImpl(private val activity: Activity) : ArchiveUtils {
 
     override fun makePackage(filename: String, filenamesToArchive: List<String>, success: Callback, failure: Callback) {
-        try {
-            val path = activity.getExternalFilesDir(null).absolutePath + "/" + filename
-            val BUFFER = 4096
+        Thread {
+            try {
+                val path = activity.getExternalFilesDir(null).absolutePath + "/" + filename
+                val bufferSize = 4096
 
-            val fos = FileOutputStream(path)
-            val zos = ZipOutputStream(BufferedOutputStream(
-                    fos))
-            val data = ByteArray(BUFFER)
+                val fos = FileOutputStream(path)
+                val zos = ZipOutputStream(BufferedOutputStream(
+                        fos))
+                val data = ByteArray(bufferSize)
 
-            filenamesToArchive.forEach {
-                val origin: BufferedInputStream
-                Log.v("Compressing", "Adding $it")
-                val fi = FileInputStream(activity.getExternalFilesDir(null).absolutePath + "/" + it)
-                origin = BufferedInputStream(fi, BUFFER)
+                filenamesToArchive.forEach {
+                    val origin: BufferedInputStream
+                    Log.v("Compressing", "Adding $it")
+                    val fi = FileInputStream(activity.getExternalFilesDir(null).absolutePath + "/" + it)
+                    origin = BufferedInputStream(fi, bufferSize)
 
-                val entry = ZipEntry(it)
-                zos.putNextEntry(entry)
+                    val entry = ZipEntry(it)
+                    zos.putNextEntry(entry)
 
 
-                while (true) {
-                    val count = origin.read(data, 0, BUFFER)
-                    if (count == -1) break
-                    zos.write(data, 0, count)
+                    while (true) {
+                        val count = origin.read(data, 0, bufferSize)
+                        if (count == -1) break
+                        zos.write(data, 0, count)
+                    }
+
+                    origin.close()
+                    zos.closeEntry()
                 }
 
-                origin.close()
-                zos.closeEntry()
+                zos.close()
+                activity.runOnUiThread { success.invoke() }
+            } catch (e: Exception) {
+                activity.runOnUiThread { failure.invoke() }
             }
-
-            zos.close()
-            success.invoke()
-        } catch (e: Exception) {
-            failure.invoke()
-        }
+        }.run()
     }
 }

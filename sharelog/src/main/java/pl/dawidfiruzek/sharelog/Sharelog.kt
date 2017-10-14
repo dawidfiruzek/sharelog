@@ -2,9 +2,7 @@ package pl.dawidfiruzek.sharelog
 
 import android.app.Activity
 import android.os.Handler
-import android.text.format.DateFormat
 import android.view.MotionEvent
-import android.widget.Toast
 import pl.dawidfiruzek.sharelog.SharelogGestureMode.MANUAL
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtils
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtilsImpl
@@ -20,7 +18,6 @@ import pl.dawidfiruzek.sharelog.util.share.ShareUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtilsImpl
 import pl.dawidfiruzek.sharelog.util.toast.ToastUtils
 import pl.dawidfiruzek.sharelog.util.toast.ToastUtilsImpl
-import java.util.*
 
 class Sharelog private constructor(
         private val activity: Activity,

@@ -1,5 +1,53 @@
 # Sharelog
-Android library to help sharing logs during app's runtime
+
+Sharelog is an Android library to help sharing logs during app's runtime.
+After calling the action, Sharelog will take a screenshot of the app, collect logs, prepare archive and call default Android's share action. After that, you will be able to choose the app to share the archive.
+
+Sharelog in action
+------------------
+![Alt text](manual.gif "Capturing using manual mode")
+![Alt text](gesture.gif "Capturing using gesture mode")
+
+
+Usage
+-----
+To init Sharelog, just call `Sharelog.getInstance(activity)` method with your activity as a parameter. After that, Sharelog will be automatically set to manual mode, which require to manually call `sharelog.capture()` method in your code.
+Example:
+```Kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+    sharelog = Sharelog.getInstance(this)
+}
+
+override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+    R.id.action_share_logs -> {
+        sharelog.capture()
+        true
+    }
+    else -> super.onOptionsItemSelected(item)
+}
+```
+
+---
+
+There is also a option to set Sharelog to gesture mode, which will automatically capture logs after detecting one of predefined gestures (triple, quad or quint taps). To use Sharelog in this mode, during initialization, explicitly set gesture mode. After that, you have to set `onTouchListener` and pass `motionEvent` to Sharelog.
+Example:
+```Kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+    sharelog = Sharelog.getInstance(this)
+            .setGestureMode(SharelogGestureMode.TRIPLE_TAP)
+
+    val root = findViewById<ConstraintLayout>(R.id.main_root)
+    root.setOnTouchListener { _, motionEvent ->
+        sharelog.capture(motionEvent)
+        true
+    }
+}
+```
+
 
 License
 -------

@@ -13,9 +13,11 @@ import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtils
 import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtils
+import pl.dawidfiruzek.sharelog.util.date.DateUtils
 import pl.dawidfiruzek.sharelog.util.logs.LogsUtils
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtils
+import pl.dawidfiruzek.sharelog.util.toast.ToastUtils
 import java.lang.reflect.Constructor
 import pl.dawidfiruzek.sharelog.util.archive.Callback as ArchiveCallback
 import pl.dawidfiruzek.sharelog.util.logs.Callback as LogsCallback
@@ -34,6 +36,8 @@ abstract class BaseSharelogTest {
             sharelogConstructor = sharelogClass.getDeclaredConstructor(
                     Activity::class.java,
                     Handler::class.java,
+                    DateUtils::class.java,
+                    ToastUtils::class.java,
                     ScreenshotUtils::class.java,
                     LogsUtils::class.java,
                     ArchiveUtils::class.java,
@@ -49,6 +53,12 @@ abstract class BaseSharelogTest {
 
     @Mock
     private lateinit var handler: Handler
+
+    @Mock
+    private lateinit var dateUtils: DateUtils
+
+    @Mock
+    private lateinit var toastUtils: ToastUtils
 
     @Mock
     private lateinit var screenshotUtils: ScreenshotUtils
@@ -74,9 +84,13 @@ abstract class BaseSharelogTest {
     fun setup() {
         MockitoAnnotations.initMocks(this)
 
+        `when`(dateUtils.getFormattedDateString(ArgumentMatchers.anyString())).thenReturn("123")
+
         sharelog = sharelogConstructor.newInstance(
                 activity,
                 handler,
+                dateUtils,
+                toastUtils,
                 screenshotUtils,
                 logsUtils,
                 archiveUtils,
@@ -92,7 +106,9 @@ abstract class BaseSharelogTest {
                 logsUtils,
                 archiveUtils,
                 shareUtils,
-                cleanupUtils)
+                cleanupUtils,
+                dateUtils,
+                toastUtils)
     }
 
     protected fun mockScreenshotFailed() {
@@ -104,11 +120,21 @@ abstract class BaseSharelogTest {
     }
 
     protected fun verifyScreenshotFailed() {
+        verifyDateUtils()
         verifyScreenshotCalled()
+        verifyToast()
+    }
+
+    private fun verifyDateUtils() {
+        verify(dateUtils, times(1)).getFormattedDateString(ArgumentMatchers.anyString())
     }
 
     private fun verifyScreenshotCalled() {
         verify(screenshotUtils, times(1)).takeScreenshot(ArgumentMatchers.anyString(), any(), any())
+    }
+
+    private fun verifyToast() {
+        verify(toastUtils, times(1)).showToast(any(), ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
     }
 
     protected fun mockScreenshotSuccess_logsFailed() {
@@ -133,8 +159,10 @@ abstract class BaseSharelogTest {
     }
 
     protected fun verifyScreenshotSuccess_logsFailed() {
+        verifyDateUtils()
         verifyScreenshotCalled()
         verifyLogsCalled()
+        verifyToast()
     }
 
     private fun verifyLogsCalled() {
@@ -165,9 +193,11 @@ abstract class BaseSharelogTest {
     }
 
     protected fun verifyScreenshotSuccess_logsSuccess_archiveFailed() {
+        verifyDateUtils()
         verifyScreenshotCalled()
         verifyLogsCalled()
         verifyArchiveCalled()
+        verifyToast()
     }
 
     private fun verifyArchiveCalled() {
@@ -190,6 +220,7 @@ abstract class BaseSharelogTest {
     }
 
     protected fun verifyScreenshotSuccess_logsSuccess_archiveSuccess() {
+        verifyDateUtils()
         verifyScreenshotCalled()
         verifyLogsCalled()
         verifyArchiveCalled()

@@ -10,17 +10,23 @@ import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtils
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtilsImpl
 import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtils
 import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtilsImpl
+import pl.dawidfiruzek.sharelog.util.date.DateUtils
+import pl.dawidfiruzek.sharelog.util.date.DateUtilsImpl
 import pl.dawidfiruzek.sharelog.util.logs.LogsUtils
 import pl.dawidfiruzek.sharelog.util.logs.LogsUtilsImpl
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtils
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtilsImpl
 import pl.dawidfiruzek.sharelog.util.share.ShareUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtilsImpl
+import pl.dawidfiruzek.sharelog.util.toast.ToastUtils
+import pl.dawidfiruzek.sharelog.util.toast.ToastUtilsImpl
 import java.util.*
 
 class Sharelog private constructor(
         private val activity: Activity,
         private val handler: Handler,
+        private val dateUtils: DateUtils,
+        private val toastUtils: ToastUtils,
         private val screenshotUtils: ScreenshotUtils,
         private val logsUtils: LogsUtils,
         private val archiveUtils: ArchiveUtils,
@@ -33,6 +39,8 @@ class Sharelog private constructor(
                 Sharelog(
                         activity,
                         Handler(),
+                        DateUtilsImpl(),
+                        ToastUtilsImpl(),
                         ScreenshotUtilsImpl(activity),
                         LogsUtilsImpl(activity),
                         ArchiveUtilsImpl(activity),
@@ -87,7 +95,7 @@ class Sharelog private constructor(
     }
 
     private fun sharelog() {
-        val date = DateFormat.format(dateFormat, Date()).toString()
+        val date = dateUtils.getFormattedDateString(dateFormat)
         val screenshotFileName = date + ".png"
         val logsFileName = date + ".txt"
         val archiveFileName = date + ".zip"
@@ -98,13 +106,13 @@ class Sharelog private constructor(
                     shareUtils.share(archiveFileName)
                     cleanupUtils.cleanup(archiveFileName)
                 }, {
-                    Toast.makeText(activity, "Failed to create archive", Toast.LENGTH_SHORT).show()
+                    toastUtils.showToast(activity, "Failed to create archive")
                 })
             }, {
-                Toast.makeText(activity, "Failed to collect logs", Toast.LENGTH_SHORT).show()
+                toastUtils.showToast(activity, "Failed to collect logs")
             })
         }, {
-            Toast.makeText(activity, "Failed to take a screenshot", Toast.LENGTH_SHORT).show()
+            toastUtils.showToast(activity, "Failed to take a screenshot")
         })
     }
 }

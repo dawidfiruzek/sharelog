@@ -9,8 +9,6 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
 import pl.dawidfiruzek.sharelog.Sharelog
 import pl.dawidfiruzek.sharelog.SharelogGestureMode
 
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        sharelog = Sharelog(this)
+        sharelog = Sharelog.getInstance(this)
                 .setGestureMode(SharelogGestureMode.TRIPLE_TAP)
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)

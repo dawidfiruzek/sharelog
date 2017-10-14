@@ -1,6 +1,6 @@
 package pl.dawidfiruzek.sharelog.util.date
 
-interface DateUtils {
+internal interface DateUtils {
 
     fun getFormattedDateString(format: String): String
 }

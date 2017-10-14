@@ -34,7 +34,7 @@ class SharelogGestureTest(private val gestureMode: SharelogGestureMode) : BaseSh
             sharelog.capture(motionEvent)
         }
 
-        //nothing should happen because of explicit set of MANUAL mode
+        //nothing should happen because of explicit setting of MANUAL mode
     }
 
     @Test

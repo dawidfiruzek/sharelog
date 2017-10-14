@@ -6,8 +6,10 @@ import android.view.MotionEvent
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import pl.dawidfiruzek.sharelog.util.archive.ArchiveUtils
 import pl.dawidfiruzek.sharelog.util.cleanup.CleanupUtils
@@ -15,6 +17,9 @@ import pl.dawidfiruzek.sharelog.util.logs.LogsUtils
 import pl.dawidfiruzek.sharelog.util.screenshot.ScreenshotUtils
 import pl.dawidfiruzek.sharelog.util.share.ShareUtils
 import java.lang.reflect.Constructor
+import pl.dawidfiruzek.sharelog.util.archive.Callback as ArchiveCallback
+import pl.dawidfiruzek.sharelog.util.logs.Callback as LogsCallback
+import pl.dawidfiruzek.sharelog.util.screenshot.Callback as ScreenshotCallback
 
 abstract class BaseSharelogTest {
 
@@ -82,7 +87,7 @@ abstract class BaseSharelogTest {
 
     @After
     fun tearDown() {
-        Mockito.verifyNoMoreInteractions(
+        verifyNoMoreInteractions(
                 screenshotUtils,
                 logsUtils,
                 archiveUtils,
@@ -91,34 +96,124 @@ abstract class BaseSharelogTest {
     }
 
     protected fun mockScreenshotFailed() {
-        TODO("Not implemented")
+        doAnswer {
+            val failure = it.arguments[2] as ScreenshotCallback
+            failure.invoke()
+            return@doAnswer null
+        }.`when`(screenshotUtils).takeScreenshot(ArgumentMatchers.anyString(), any(), any())
     }
 
     protected fun verifyScreenshotFailed() {
-        TODO("Not implemented")
+        verifyScreenshotCalled()
+    }
+
+    private fun verifyScreenshotCalled() {
+        verify(screenshotUtils, times(1)).takeScreenshot(ArgumentMatchers.anyString(), any(), any())
     }
 
     protected fun mockScreenshotSuccess_logsFailed() {
-        TODO("Not implemented")
+        mockScreenshotSuccess()
+        mockLogsFailed()
+    }
+
+    private fun mockScreenshotSuccess() {
+        doAnswer {
+            val success = it.arguments[1] as ScreenshotCallback
+            success.invoke()
+            return@doAnswer null
+        }.`when`(screenshotUtils).takeScreenshot(ArgumentMatchers.anyString(), any(), any())
+    }
+
+    private fun mockLogsFailed() {
+        doAnswer {
+            val failure = it.arguments[2] as LogsCallback
+            failure.invoke()
+            return@doAnswer null
+        }.`when`(logsUtils).collectLogs(ArgumentMatchers.anyString(), any(), any())
     }
 
     protected fun verifyScreenshotSuccess_logsFailed() {
-        TODO("Not implemented")
+        verifyScreenshotCalled()
+        verifyLogsCalled()
+    }
+
+    private fun verifyLogsCalled() {
+        verify(logsUtils, times(1)).collectLogs(ArgumentMatchers.anyString(), any(), any())
     }
 
     protected fun mockScreenshotSuccess_logsSuccess_archiveFailed() {
-        TODO("Not implemented")
+        mockScreenshotSuccess()
+        mockLogsSuccess()
+        mockArchiveFailed()
+    }
+
+    private fun mockLogsSuccess() {
+        doAnswer {
+            val success = it.arguments[1] as LogsCallback
+            success.invoke()
+            return@doAnswer null
+        }.`when`(logsUtils).collectLogs(ArgumentMatchers.anyString(), any(), any())
+
+    }
+
+    private fun mockArchiveFailed() {
+        doAnswer {
+            val failure = it.arguments[3] as ArchiveCallback
+            failure.invoke()
+            return@doAnswer null
+        }.`when`(archiveUtils).makePackage(ArgumentMatchers.anyString(), ArgumentMatchers.anyList(), any(), any())
     }
 
     protected fun verifyScreenshotSuccess_logsSuccess_archiveFailed() {
-        TODO("Not implemented")
+        verifyScreenshotCalled()
+        verifyLogsCalled()
+        verifyArchiveCalled()
+    }
+
+    private fun verifyArchiveCalled() {
+        verify(archiveUtils, times(1)).makePackage(ArgumentMatchers.anyString(), ArgumentMatchers.anyList(), any(), any())
     }
 
     protected fun mockScreenshotSuccess_logsSuccess_archiveSuccess() {
-        TODO("Not implemented")
+        mockScreenshotSuccess()
+        mockLogsSuccess()
+        mockArchiveSuccess()
+
+    }
+
+    private fun mockArchiveSuccess() {
+        doAnswer {
+            val success = it.arguments[2] as ArchiveCallback
+            success.invoke()
+            return@doAnswer null
+        }.`when`(archiveUtils).makePackage(ArgumentMatchers.anyString(), ArgumentMatchers.anyList(), any(), any())
     }
 
     protected fun verifyScreenshotSuccess_logsSuccess_archiveSuccess() {
-        TODO("Not implemented")
+        verifyScreenshotCalled()
+        verifyLogsCalled()
+        verifyArchiveCalled()
+        verifyShareCalled()
+        verifyCleanupCalled()
     }
+
+    private fun verifyShareCalled() {
+        verify(shareUtils, times(1)).share(ArgumentMatchers.anyString())
+    }
+
+    private fun verifyCleanupCalled() {
+        verify(cleanupUtils, times(1)).cleanup(ArgumentMatchers.anyString())
+    }
+
+    protected fun <T> any(): T {
+        Mockito.any<T>()
+        return uninitialized()
+    }
+
+    protected fun <T> any(c: Class<T>): T {
+        Mockito.any<T>(c)
+        return uninitialized()
+    }
+
+    private fun <T> uninitialized(): T = null as T
 }

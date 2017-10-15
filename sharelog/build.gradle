@@ -33,6 +33,9 @@ bintray {
 publishing {
     publications {
         SharelogPublication(MavenPublication) {
+            groupId 'pl.dawidfiruzek'
+            artifactId 'sharelog'
+            version libVersionName
             pom.withXml {
                 // Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
                 configurations.compile.allDependencies.each {

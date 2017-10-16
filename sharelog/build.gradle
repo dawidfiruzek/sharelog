@@ -1,5 +1,48 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+buildscript {
+    ext.libVersionCode = 1
+    ext.libVersionName = "1.0"
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+bintray {
+    user=BINTRAY_USER
+    key=BINTRAY_KEY
+    publications = ['release']
+    pkg {
+        repo = 'android'
+        name = 'sharelog'
+        licenses = ['Apache-2.0']
+        desc = 'Android library to help sharing logs during app\'s runtime'
+        vcsUrl = 'https://github.com/dawidfiruzek/sharelog.git'
+        labels = ['aar', 'android']
+        publicDownloadNumbers = true
+        version {
+            name = libVersionName
+            released  = new Date()
+        }
+    }
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            artifact("$buildDir/outputs/aar/sharelog-release.aar")
+            groupId 'pl.dawidfiruzek'
+            artifactId 'sharelog'
+            version libVersionName
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -15,8 +58,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode libVersionCode
+        versionName libVersionName
     }
     buildTypes {
         release {
@@ -32,4 +75,13 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.10.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.android.support:support-v4:26.0.1'
+}
+
+task uploadLib(type: GradleBuild) {
+    tasks = [
+            ':sharelog:clean',
+            ':sharelog:assembleRelease',
+            ':sharelog:generatePomFileForReleasePublication',
+            ':sharelog:bintrayUpload'
+    ]
 }

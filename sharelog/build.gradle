@@ -22,7 +22,10 @@ bintray {
         repo = 'android'
         name = 'sharelog'
         licenses = ['Apache-2.0']
+        desc = 'Android library to help sharing logs during app\'s runtime'
         vcsUrl = 'https://github.com/dawidfiruzek/sharelog.git'
+        labels = ['aar', 'android']
+        publicDownloadNumbers = true
         version {
             name = libVersionName
             released  = new Date()
@@ -33,6 +36,7 @@ bintray {
 publishing {
     publications {
         SharelogPublication(MavenPublication) {
+            artifact("$buildDir/outputs/aar/sharelog-release.aar")
             groupId 'pl.dawidfiruzek'
             artifactId 'sharelog'
             version libVersionName

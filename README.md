@@ -11,6 +11,10 @@ Sharelog in action
 
 Usage
 -----
+Add gradle dependency to your project
+```
+compile 'pl.dawidfiruzek:sharelog:1.0'
+```
 To init Sharelog, just call `Sharelog.getInstance(activity)` method with your activity as a parameter. After that, Sharelog will be automatically set to manual mode, which require to manually call `sharelog.capture()` method in your code.
 Example:
 ```Kotlin
